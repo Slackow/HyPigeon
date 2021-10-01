@@ -1,0 +1,16 @@
+[
+{
+  "modid": "hypigeon",
+  "name": "HyPigeon!!!",
+  "description": "A mod that lets you play games with people on your friends list",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Slackow"],
+  "credits": "",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
