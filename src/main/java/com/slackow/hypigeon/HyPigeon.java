@@ -1,10 +1,10 @@
 package com.slackow.hypigeon;
 
 import com.slackow.hypigeon.games.chess.ChessGame;
-import com.slackow.hypigeon.games.core.AbstractGame;
 import com.slackow.hypigeon.games.connect4.Connect4Game;
-import com.slackow.hypigeon.games.tictactoe.TicTacToeGame;
+import com.slackow.hypigeon.games.core.AbstractGame;
 import com.slackow.hypigeon.games.core.AbstractSession;
+import com.slackow.hypigeon.games.tictactoe.TicTacToeGame;
 import com.slackow.hypigeon.util.Task;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -12,6 +12,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -107,6 +109,7 @@ public class HyPigeon
     }
 
 
+    @SideOnly(Side.CLIENT)
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
