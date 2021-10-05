@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class TicTacToeSession extends AbstractSession {
+public class TicTacToeSession extends AbstractSession<TicTacToeSession> {
 
     private final char[][] data = new char[3][3];
 

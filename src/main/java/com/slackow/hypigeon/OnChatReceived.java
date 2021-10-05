@@ -89,7 +89,7 @@ public class OnChatReceived {
                         feedback = game.save(fromTo, opponent, data);
                         break;
                     case RESIGN:
-                        Optional<AbstractSession> session = activeSessions.stream()
+                        Optional<AbstractSession<?>> session = activeSessions.stream()
                                 .filter(sess -> sess.getOpponent().equals(opponent) && sess.getGame() == game)
                                 .findAny();
                         if (session.isPresent()) {

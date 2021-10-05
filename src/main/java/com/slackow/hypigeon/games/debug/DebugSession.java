@@ -2,7 +2,7 @@ package com.slackow.hypigeon.games.debug;
 
 import com.slackow.hypigeon.games.core.AbstractSession;
 
-class DebugSession extends AbstractSession {
+class DebugSession extends AbstractSession<DebugSession> {
     public DebugSession(String name) {
         super(name, true, new DebugGame());
     }

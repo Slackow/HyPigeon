@@ -45,7 +45,7 @@ public class HyPigeon
 
     private static final List<AbstractGame> registeredGames = new ArrayList<>();
 
-    public static final List<AbstractSession> activeSessions = new ArrayList<>();
+    public static final List<AbstractSession<?>> activeSessions = new ArrayList<>();
 
     public static final List<Pair<String, byte[]>> invites = new ArrayList<>();
 

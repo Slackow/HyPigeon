@@ -68,10 +68,14 @@ public class ChessGame extends AbstractGame {
         if ("To".equals(fromTo)) {
             if (chess.isPresent()) {
                 game = chess.get();
+                // from pos 1 to pos 2
                 byte from = data[2];
                 byte to = data[3];
                 byte promote = data[4];
-                if (game.getBoard().doMove(new Move(Square.squareAt(from), Square.squareAt(to), allPieces[promote]))) {
+                // get sent time
+                long time = data[5] << 6 | data[6] << 3 | data[7];
+                boolean ignoreMove = game.isTimeControlled() && time == 0;
+                if (ignoreMove || game.getBoard().doMove(new Move(Square.squareAt(from), Square.squareAt(to), allPieces[promote]))) {
                     game.lock();
                 } else {
                     return text(RED + "Illegal chess move sent");
@@ -86,7 +90,16 @@ public class ChessGame extends AbstractGame {
                 byte from = data[2];
                 byte to = data[3];
                 byte promote = data[4];
-                if (game.getBoard().doMove(new Move(Square.squareAt(from), Square.squareAt(to), allPieces[promote]))) {
+                long time = data[5] << 6 | data[6] << 3 | data[7];
+
+                boolean ignoreMove = false;
+                if (game.isTimeControlled()) {
+                    game.setTheirTimer(time);
+                    ignoreMove = time == 0;
+                }
+
+                if (ignoreMove || game.getBoard().doMove(new Move(Square.squareAt(from), Square.squareAt(to), allPieces[promote]))) {
+                    game.updateLast();
                     game.unlock();
                 } else {
                     return text(RED + "Illegal chess move received");

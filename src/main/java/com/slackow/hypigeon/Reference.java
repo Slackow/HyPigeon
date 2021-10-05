@@ -1,5 +1,6 @@
 package com.slackow.hypigeon;
 
+@SuppressWarnings("unused")
 public class Reference {
     public static final byte TIC_TAC_TOE = 0;
     public static final byte CHESS = 1;
@@ -9,6 +10,7 @@ public class Reference {
     public static final byte GOMOKU = 5;
     public static final byte FILLER = 6;
     public static final byte MANCALA = 7;
+    public static final byte ULT_TIC_TAC = 8;
 
     public static final byte INVITE = 0;
     public static final byte CANCEL_INVITE = 1;

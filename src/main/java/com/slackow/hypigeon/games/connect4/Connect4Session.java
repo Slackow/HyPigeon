@@ -6,7 +6,7 @@ import net.minecraft.util.MathHelper;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class Connect4Session extends AbstractSession {
+public class Connect4Session extends AbstractSession<Connect4Session> {
     public Connect4Session(String opponent, boolean doIMoveFirst) {
         super(opponent, doIMoveFirst, Connect4Game.INSTANCE);
     }

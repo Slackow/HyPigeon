@@ -1,5 +1,6 @@
 package com.slackow.hypigeon.games.core;
 
+import com.github.bhlangonijr.chesslib.Side;
 import com.google.common.collect.Lists;
 import com.slackow.hypigeon.HyPigeon;
 import com.slackow.hypigeon.gui.component.InvisibleButton;
@@ -19,7 +20,7 @@ import static net.minecraft.util.EnumChatFormatting.RESET;
 import static net.minecraft.util.EnumChatFormatting.YELLOW;
 
 @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-public abstract class GameGui<T extends AbstractSession> extends HyPigeonGui {
+public abstract class GameGui<T extends AbstractSession<T>> extends HyPigeonGui {
     protected final T session;
     protected String title;
     private InvisibleButton chatButton;

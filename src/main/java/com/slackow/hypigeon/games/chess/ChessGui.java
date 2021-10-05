@@ -12,14 +12,13 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
 
 import static com.github.bhlangonijr.chesslib.File.allFiles;
 import static com.github.bhlangonijr.chesslib.Piece.NONE;
-import static com.github.bhlangonijr.chesslib.Piece.*;
 import static com.github.bhlangonijr.chesslib.PieceType.PAWN;
+import static com.github.bhlangonijr.chesslib.PieceType.QUEEN;
 import static com.github.bhlangonijr.chesslib.Rank.*;
 import static com.slackow.hypigeon.Reference.CHESS;
 import static com.slackow.hypigeon.Reference.NEXT_MOVE;
@@ -43,6 +42,7 @@ public class ChessGui extends GameGui<ChessSession> {
         int centerY = height / 2 - 64;
 
         mc.renderEngine.bindTexture(texture);
+        // draw the board
         drawTexturedModalRect(centerX, centerY, session.doIMoveFirst() ? 0 : 128, 0, guiWidth, guiHeight);
         GlStateManager.pushMatrix();
         GlStateManager.translate(centerX, centerY, 0);
@@ -50,6 +50,7 @@ public class ChessGui extends GameGui<ChessSession> {
         Board board = session.getBoard();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                //draw every piece
                 Square sq = Square.encode(allRanks[i], allFiles[j]);
                 Piece piece = board.getPiece(sq);
                 if (piece != NONE) {
@@ -59,6 +60,13 @@ public class ChessGui extends GameGui<ChessSession> {
                 }
             }
         }
+        // draw the piece that pawns will promote to
+
+        displayPiece(selectedPromotion, centerX + 128, centerY - 8);
+
+
+        // draw a square where all legal moves are if
+        // there is a selected square
         if (selectedSlot >= 0) {
             session.legalMoves().stream()
                     .filter(move -> move.getFrom().ordinal() == selectedSlot)
@@ -72,6 +80,24 @@ public class ChessGui extends GameGui<ChessSession> {
         GlStateManager.popMatrix();
         buttonList.stream().filter(button -> button.id >= 0).forEach(button -> button.enabled = !getSession().isLocked());
         super.drawScreen(mouseX, mouseY, partialTicks);
+    }
+
+    public String displayTime(long time) {
+        if (time == -1) {
+            // infinity sign
+            return "\u221E";
+        } else {
+            if (time == 0 && !session.isLocked()) {
+                byte[] data = new byte[]{CHESS, NEXT_MOVE, selectedSlot,
+                        (byte) 0,
+                        (byte) 0,
+                        (byte) 0,
+                        (byte) 0,
+                        (byte) 0};
+                HyPigeon.sendPacket(getOpponent(), data);
+            }
+            return String.format("%d:%02d.%02d", time / 6000, (time / 100) % 60, (time / 10) % 100);
+        }
     }
 
 
@@ -99,7 +125,8 @@ public class ChessGui extends GameGui<ChessSession> {
     private byte selectedSlot = -1;
 
 
-
+    @SuppressWarnings("FieldMayBeFinal")
+    private Piece selectedPromotion = Piece.make(session.getMySide(), QUEEN);
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
@@ -112,14 +139,22 @@ public class ChessGui extends GameGui<ChessSession> {
                 Square from = Square.squareAt(selectedSlot);
                 Move move;
                 Piece fromPiece = session.getBoard().getPiece(from);
-                if (from.getRank() == (session.doIMoveFirst() ? RANK_7 : RANK_2) &&
+                if (to.getRank() == (session.doIMoveFirst() ? RANK_8 : RANK_1) &&
                         fromPiece.getPieceType() == PAWN) {
-                    move = new Move(from, to, session.doIMoveFirst() ? WHITE_QUEEN : BLACK_QUEEN);
+                    move = new Move(from, to, selectedPromotion);
                 } else {
                     move = new Move(from, to);
                 }
                 if (session.legalMoves().contains(move)) {
-                    byte[] data = new byte[]{CHESS, NEXT_MOVE, selectedSlot, (byte) spot, (byte) (move.getPromotion().ordinal())};
+                    session.updateTimer(Math.max(0, session.displayTimer()));
+                    // game, type, from, to, promotion, time
+                    long time = session.displayTimer();
+                    byte[] data = new byte[]{CHESS, NEXT_MOVE, selectedSlot,
+                            (byte) spot,
+                            (byte) (move.getPromotion().ordinal()),
+                            (byte) ((time >> 6) & 63),
+                            (byte) ((time >> 3) & 63),
+                            (byte) (time & 63)};
                     HyPigeon.sendPacket(getOpponent(), data);
                     selectedSlot = -1;
                 } else {
